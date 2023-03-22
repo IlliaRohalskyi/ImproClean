@@ -1,4 +1,4 @@
 # ImproClean
 Forschungsprojekt
 
-Hier folgt ein Inhaltsverzeichnis
+Hier folgt eine Beschreibung
