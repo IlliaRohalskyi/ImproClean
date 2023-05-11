@@ -1,0 +1,12 @@
+Package: Cleaner
+Type: Package
+Title: Webscraping of desinfection data
+Version: 0.1.0
+Author: Oliver Thunich, Piet Frieler
+Maintainer: Piet Frieler <piet.frieler@statcon.de>
+Description: More about what it does (maybe more than one line)
+    Use four spaces when indenting paragraphs within the Description.
+Imports: rvest, tidyverse, xml2, qlcMatrix
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
