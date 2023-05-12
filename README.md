@@ -1,4 +1,3 @@
-# ImproClean
-Forschungsprojekt
+# Forschungsprojekt: ImproClean
 
-Hier folgt eine Beschreibung
+Entwicklungsrepo
