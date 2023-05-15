@@ -18,16 +18,16 @@ VAHBasis <- VAHBasis[[1]]
 VAHBasis<-data.frame(VAHBasis)
 
 #Erstelle Detailseitenlink aus Produktnamen
-VAHBasis$simpleprod<-gsub("®","r",VAHBasis[,1])
+VAHBasis$simpleprod<-gsub("Â®","r",VAHBasis[,1])
 
-VAHBasis$simpleprod<-gsub("³ ","3",VAHBasis$simpleprod)
+VAHBasis$simpleprod<-gsub("Â³ ","3",VAHBasis$simpleprod)
 VAHBasis$simpleprod<-gsub("'","",VAHBasis$simpleprod)
-VAHBasis$simpleprod<-gsub("T","tm",VAHBasis$simpleprod)
+VAHBasis$simpleprod<-gsub("â„¢","tm",VAHBasis$simpleprod)
 VAHBasis$simpleprod<-tolower(VAHBasis$simpleprod)
-VAHBasis$simpleprod<-gsub("ä","ae",VAHBasis$simpleprod)
-VAHBasis$simpleprod<-gsub("ö","oe",VAHBasis$simpleprod)
-VAHBasis$simpleprod<-gsub("ü","ue",VAHBasis$simpleprod)
-VAHBasis$simpleprod<-gsub("°","",VAHBasis$simpleprod)
+VAHBasis$simpleprod<-gsub("Ã¤","ae",VAHBasis$simpleprod)
+VAHBasis$simpleprod<-gsub("Ã¶","oe",VAHBasis$simpleprod)
+VAHBasis$simpleprod<-gsub("Ã¼","ue",VAHBasis$simpleprod)
+VAHBasis$simpleprod<-gsub("Â°","",VAHBasis$simpleprod)
 VAHBasis$simpleprod<-gsub(",","",VAHBasis$simpleprod)
 VAHBasis$simpleprod<-gsub("\\.","",VAHBasis$simpleprod)
 VAHBasis$simpleprod<-gsub("\"","",VAHBasis$simpleprod)
@@ -45,7 +45,7 @@ VAHBasis$simpleprod<-gsub("---","-",VAHBasis$simpleprod)
 VAHBasis$simpleprod<-gsub("--","-",VAHBasis$simpleprod)
 
 
-#Unregelmäßige Ausnahmen
+#Unregelm??ige Ausnahmen
 VAHBasis$simpleprod[80]<-"ariel-formula-pro"
 VAHBasis$simpleprod[88]<-"aseptoman-pro"
 VAHBasis$simpleprod[128]<-"bechtid-pemium"
@@ -71,7 +71,7 @@ VAHBasis$simpleprod[1152]<-"pino-septapin-des-desinfektionstuecher"
 VAHBasis$simpleprod[1322]<-"ventisept-wipes-rtu"
 VAHBasis$simpleprod[1330]<-"vinkocide-hde"
 
-#Bindestriche am Ende löschen
+#Bindestriche am Ende l?schen
 endings<-str_sub(VAHBasis$simpleprod,start=-1)
 replacement<-str_sub(VAHBasis$simpleprod, end = -2)
 for(i in 1:nrow(VAHBasis)){
@@ -89,20 +89,19 @@ for(i in 1:length(doubles)){
     doubles[i]<-paste(doubles[i],suffix[i],sep="-")
   }
 }
-doubles
+#doubles
 VAHBasis$simpleprod[which(duplicated(VAHBasis$simpleprod)|duplicated(VAHBasis$simpleprod,fromLast=T)==T)]<-doubles
 
 #Hole Detailseiten
 #VAHDetails<-list()
-#GetDetails Hole die Detailseiten aus generierten links- Spalte mit Link Suffixes muss simpleprod heißen
+#GetDetails Hole die Detailseiten aus generierten links- Spalte mit Link Suffixes muss simpleprod hei?en
 GetDetails<-function(Base=VAHBasis){
   Details<-list()
   for(i in 1:nrow(Base)){
     url<-paste0("https://vah-liste.mhp-verlag.de/suche/details/",Base$simpleprod[i])
-    temp<-read_html(url)
-    Details[[i]] <-  temp %>%  html_table(dec=",")
+    try({temp<-read_html(url);Details[[i]] <-  temp %>%  html_table(dec=",")},silent =T)
   }
-  Return(Details)
+  return(Details)
 }
 VAHDetails<-GetDetails()
 
@@ -114,16 +113,18 @@ VAHDetails<-GetDetails()
 GetInfos<-function(Base=VAHBasis,Details=VAHDetails){
   Data<-Base
   #VAHDetails2<-VAHDetails
-  
+ 
   for(j in 1:length(Details)){
-    df<-data.frame(Details[[j]][[1]])
-    df[,1]<-gsub(" ","",df[,1])
-    df[,1]<-gsub("\\(","",df[,1])
-    df[,1]<-gsub("\\)","",df[,1])
-    df[,1]<-gsub("/","",df[,1])
-    
-    for(i in 1:nrow(df)){
-      Data[j,df[i,1]]<-df[i,2]
+    if(length(Details[[j]])>0){
+      df<-data.frame(Details[[j]][[1]])
+      df[,1]<-gsub(" ","",df[,1])
+      df[,1]<-gsub("\\(","",df[,1])
+      df[,1]<-gsub("\\)","",df[,1])
+      df[,1]<-gsub("/","",df[,1])
+      
+      for(i in 1:nrow(df)){
+        Data[j,df[i,1]]<-df[i,2]
+      }
     }
   }
   return(Data)
@@ -145,12 +146,12 @@ sum(detailslength==2)
 Anwendungen<-split(VAH,VAH$Anwendungsbereich)
 
 
-###1.Händewaschung
-Handwaschung<-Anwendungen$Händewaschung
+###1.H?ndewaschung
+Handwaschung<-Anwendungen$HÃ¤ndewaschung
 Handwaschung %>%
   add_column(bakterizid_leuvozid_30s=NA,bakterizid_leuvozid_60s=NA)
 
-products<-which(VAH$Anwendungsbereich=="Händewaschung")
+products<-which(VAH$Anwendungsbereich=="HÃ¤ndewaschung")
 counter=1
 for(i in products){
   if(detailslength[i]==3){
@@ -163,14 +164,14 @@ for(i in products){
 Handwaschung<-Handwaschung[,-c(4,10,12:16)]
 
 
-###2.Flächendesinfektion
+###2.Fl?chendesinfektion
 
-Flaechendesinfektion<-Anwendungen$Flächendesinfektion
+Flaechendesinfektion<-Anwendungen$FlÃ¤chendesinfektion
 #Flaechendesinfektion %>%
  # add_column(bakterizid_leuvozid_30s=NA,
 #             bakterizid_leuvozid_60s=NA)
 
-products<-which(VAH$Anwendungsbereich=="Flächendesinfektion")
+products<-which(VAH$Anwendungsbereich=="FlÃ¤chendesinfektion")
 counter=1
 
 for(i in products){
@@ -187,9 +188,9 @@ for(i in products){
 
 
 ###3.Haendedesinfektion
-Haendedesinfektion<-Anwendungen$Händedesinfektion
+Haendedesinfektion<-Anwendungen$HÃ¤ndedesinfektion
 
-products<-which(VAH$Anwendungsbereich=="Händedesinfektion")
+products<-which(VAH$Anwendungsbereich=="HÃ¤ndedesinfektion")
 counter=1
 
 for(i in products){
@@ -241,15 +242,15 @@ for(i in products){
   counter<-counter+1
 }
 
-###6.Wäsche Desinfektion
-WaeschedesinfektionVAH<-Anwendungen$Wäschedesinfektion
+###6.W?sche Desinfektion
+WaeschedesinfektionVAH<-Anwendungen$WÃ¤schedesinfektion
 
-products<-which(VAH$Anwendungsbereich=="Wäschedesinfektion")
+products<-which(VAH$Anwendungsbereich=="WÃ¤schedesinfektion")
 
 WaeschedesinfektionVAH %>%
-  add_column(Anwendungskonzentration=NA,Temperatur_C=NA,Einwirkdauer_min=NA,Flottenverhältnis=NA)
+  add_column(Anwendungskonzentration=NA,Temperatur_C=NA,Einwirkdauer_min=NA,FlottenverhÃ¤ltnis=NA)
 
-#Temperatur und Einwirkzeit: Maximum über den gesamten Prozess
+#Temperatur und Einwirkzeit: Maximum ?ber den gesamten Prozess
 counter=1
 for(i in products){
   if(detailslength[i]==3){
@@ -266,7 +267,7 @@ for(i in products){
     Einwirk<-regmatches(temp[4], gregexpr("[[:digit:]]+", temp[4]))
     Einwirk<-max(as.numeric(unlist(Einwirk)))
     WaeschedesinfektionVAH$Einwirkdauer_min[counter]<-Einwirk
-    WaeschedesinfektionVAH$Flottenverhältnis[counter]<-strsplit(temp[5]," ")[[1]][2]
+    WaeschedesinfektionVAH$FlottenverhÃ¤ltnis[counter]<-strsplit(temp[5]," ")[[1]][2]
   }
   counter<-counter+1
 }
@@ -275,8 +276,8 @@ for(i in products){
 WaeschedesinfektionVAH[which(WaeschedesinfektionVAH$simpleprod=="eltra"),18:20]<-NA
 
 
-VAHlist<-list("VAH"=VAH,"Handwaschung"=Handwaschung,"Händedesinfektion"=Haendedesinfektion,"Hautantiseptik"=Hautantiseptik
-               ,"Flächendesinfektion"=Flaechendesinfektion,"Instrumentendesinfektion"=Instrumentendesinfektion
-               ,"Wäschedesinfektion"=WaeschedesinfektionVAH)
+VAHlist<-list("VAH"=VAH,"Handwaschung"=Handwaschung,"HÃ¤ndedesinfektion"=Haendedesinfektion,"Hautantiseptik"=Hautantiseptik
+               ,"FlÃ¤chendesinfektion"=Flaechendesinfektion,"Instrumentendesinfektion"=Instrumentendesinfektion
+               ,"WÃ¤schedesinfektion"=WaeschedesinfektionVAH)
 write.xlsx(VAHlist, file="VAH.xlsx")
 
