@@ -7,7 +7,7 @@ library(openxlsx)
 #Hole Daten aus Internet
 #1.Basisliste mit NAmen, Hersteller, und Wierkbereich 
 
-url <- "C:/Users/olive/Downloads/VAH-Liste_ VAH-Liste.html"
+url <- "C:/Users/olive/Downloads/VAH-Liste_ VAH-Liste2.html"
 
 #url<-"https://vah-liste.mhp-verlag.de/"
 VAHBasis <-  read_html(url) 
@@ -144,137 +144,153 @@ sum(detailslength==2)
 
 
 ####Anwendungstabelle nach anwendungsart
-Anwendungen<-split(VAH,VAH$Anwendungsbereich)
+#Anwendungen<-split(VAH,VAH$Anwendungsbereich)
 
 
 ###1.H?ndewaschung
-Handwaschung<-Anwendungen$Händewaschung
-Handwaschung %>%
-  add_column(bakterizid_leuvozid_30s=NA,bakterizid_leuvozid_60s=NA)
-
-products<-which(VAH$Anwendungsbereich=="Händewaschung")
-counter=1
-for(i in products){
-  if(detailslength[i]==3){
-    Handwaschung$bakterizid_leuvozid_30s[counter]<-VAHDetails[[i]][[2]][3,2]
-    Handwaschung$bakterizid_leuvozid_60s[counter]<-VAHDetails[[i]][[2]][3,3]
+GetHandwaschung<-function(Base=VAH,FullDetails=VAHDetails){
+  detailslength<-sapply(FullDetails,function(x) length(x))
+  products<-which(Base$Anwendungsbereich=="Händewaschung")
+  Handwaschung<-Base[products,]
+  counter=1
+  for(i in products){
+    if(detailslength[i]==3){
+      Handwaschung$bakterizid_leuvozid_30s[counter]<-VAHDetails[[i]][[2]][3,2]
+      Handwaschung$bakterizid_leuvozid_60s[counter]<-VAHDetails[[i]][[2]][3,3]
+    }
+    counter<-counter+1
   }
-  counter<-counter+1
+  
+  Handwaschung<-Handwaschung[,-c(4,10,12:16)]
+  return(Handwaschung)
 }
-
-Handwaschung<-Handwaschung[,-c(4,10,12:16)]
-
-
+Handwaschung<-GetHandwaschung()
 ###2.Fl?chendesinfektion
 
-Flaechendesinfektion<-Anwendungen$Flächendesinfektion
-#Flaechendesinfektion %>%
- # add_column(bakterizid_leuvozid_30s=NA,
-#             bakterizid_leuvozid_60s=NA)
-
-products<-which(VAH$Anwendungsbereich=="Flächendesinfektion")
-counter=1
-
-for(i in products){
-  if(detailslength[i]==3){
-    Details<-VAHDetails[[i]][[2]]
-    for(j in 3:nrow(Details)){
-      for(k in 2:ncol(Details)){
-        Flaechendesinfektion[counter,paste0(Details[j,1],Details[1,k],Details[2,k])]<-Details[j,k]
+GetFlaecheVAH<-function(Base=VAH,FullDetails=VAHDetails){
+  detailslength<-sapply(FullDetails,function(x) length(x))
+  products<-which(Base$Anwendungsbereich=="Flächendesinfektion")
+  Flaechendesinfektion<-Base[products,]
+  counter=1
+  
+  for(i in products){
+    if(detailslength[i]==3){
+      Details<-FullDetails[[i]][[2]]
+      for(j in 3:nrow(Details)){
+        for(k in 2:ncol(Details)){
+          Flaechendesinfektion[counter,paste0(Details[j,1],Details[1,k],Details[2,k])]<-Details[j,k]
+        }
       }
     }
+    counter<-counter+1
   }
-  counter<-counter+1
+  return(Flaechendesinfektion)
 }
-
+Flaechendesinfektion<-GetFlaecheVAH()
 
 ###3.Haendedesinfektion
-Haendedesinfektion<-Anwendungen$Händedesinfektion
 
-products<-which(VAH$Anwendungsbereich=="Händedesinfektion")
-counter=1
-
-for(i in products){
-  if(detailslength[i]==3){
-    Details<-VAHDetails[[i]][[2]]
-    for(j in 4:nrow(Details)){
-      for(k in 2:ncol(Details)){
-        Haendedesinfektion[counter,paste0(Details[j,1],Details[1,k],Details[2,k],Details[3,k])]<-Details[j,k]
+GetHaendeDesVAH<-function(Base=VAH,FullDetails=VAHDetails){
+  detailslength<-sapply(FullDetails,function(x) length(x))
+  products<-which(Base$Anwendungsbereich=="Händedesinfektion")
+  Haendedesinfektion<-Base[products,]
+  counter=1
+  
+  for(i in products){
+    if(detailslength[i]==3){
+      Details<-FullDetails[[i]][[2]]
+      for(j in 4:nrow(Details)){
+        for(k in 2:ncol(Details)){
+          Haendedesinfektion[counter,paste0(Details[j,1],Details[1,k],Details[2,k],Details[3,k])]<-Details[j,k]
+        }
       }
     }
+    counter<-counter+1
   }
-  counter<-counter+1
+  return(Haendedesinfektion)
 }
-
+Haendedesinfektion<-GetHaendeDesVAH()
 ###4.Hautantiseptik
-Hautantiseptik<-Anwendungen$Hautantiseptik
-
-products<-which(VAH$Anwendungsbereich=="Hautantiseptik")
-counter=1
-
-for(i in products){
-  if(detailslength[i]==3){
-    Details<-VAHDetails[[i]][[2]]
-    for(j in 5:nrow(Details)){
-      for(k in 2:ncol(Details)){
-        Hautantiseptik[counter,paste0(Details[j,1],Details[1,k],Details[2,k],Details[3,k],Details[4,k])]<-Details[j,k]
+GetHautVAH<-function(Base=VAH,FullDetails=VAHDetails){
+  
+  detailslength<-sapply(FullDetails,function(x) length(x))
+  products<-which(Base$Anwendungsbereich=="Hautantiseptik")
+  Hautantiseptik<-Base[products,]
+  counter=1
+  
+  for(i in products){
+    if(detailslength[i]==3){
+      Details<-FullDetails[[i]][[2]]
+      for(j in 5:nrow(Details)){
+        for(k in 2:ncol(Details)){
+          Hautantiseptik[counter,paste0(Details[j,1],Details[1,k],Details[2,k],Details[3,k],Details[4,k])]<-Details[j,k]
+        }
       }
     }
+    counter<-counter+1
   }
-  counter<-counter+1
+  return(Hautantiseptik)
 }
-
+Hautantiseptik<-GetHautVAH()
 
 ###5.Instrumentendesinfektion
-Instrumentendesinfektion<-Anwendungen$Instrumentendesinfektion
-
-products<-which(VAH$Anwendungsbereich=="Instrumentendesinfektion")
-counter=1
-
-for(i in products){
-  if(detailslength[i]==3){
-    Details<-VAHDetails[[i]][[2]]
-    for(j in 3:nrow(Details)){
-      for(k in 2:ncol(Details)){
-        Instrumentendesinfektion[counter,paste0(Details[j,1],Details[1,k],Details[2,k])]<-Details[j,k]
+GetInstrumenteVAH<-function(Base=VAH,FullDetails=VAHDetails){
+  
+  detailslength<-sapply(FullDetails,function(x) length(x))
+  products<-which(Base$Anwendungsbereich=="Instrumentendesinfektion")
+  Instrumentendesinfektion<-Base[products,]
+  counter=1
+  for(i in products){
+    if(detailslength[i]==3){
+      Details<-FullDetails[[i]][[2]]
+      for(j in 3:nrow(Details)){
+        for(k in 2:ncol(Details)){
+          Instrumentendesinfektion[counter,paste0(Details[j,1],Details[1,k],Details[2,k])]<-Details[j,k]
+        }
       }
     }
+    counter<-counter+1
   }
-  counter<-counter+1
+  return(Instrumentendesinfektion)
 }
+Instrumentendesinfektion<-GetInstrumenteVAH()
 
 ###6.W?sche Desinfektion
-WaeschedesinfektionVAH<-Anwendungen$Wäschedesinfektion
-
-products<-which(VAH$Anwendungsbereich=="Wäschedesinfektion")
-
-WaeschedesinfektionVAH %>%
-  add_column(Anwendungskonzentration=NA,Temperatur_C=NA,Einwirkdauer_min=NA,Flottenverhältnis=NA)
-
-#Temperatur und Einwirkzeit: Maximum ?ber den gesamten Prozess
-counter=1
-for(i in products){
-  if(detailslength[i]==3){
-    Details<-VAHDetails[[i]][[2]]
-    temp<-NULL
-    temp<-strsplit(as.character(VAHDetails[[i]][[2]][2,2]),"\n")
-    temp<-str_trim(temp[[1]],side="both")
-    temp<-temp[nzchar(temp)]
-    WaeschedesinfektionVAH$Anwendungskonzentration[counter]<-temp[2]
-    Temperatur<-temp[3]
-    Temperatur<-regmatches(Temperatur, gregexpr("[[:digit:]]+", Temperatur))
-    Temperatur<-max(as.numeric(unlist(Temperatur)))
-    WaeschedesinfektionVAH$Temperatur_C[counter]<-Temperatur
-    Einwirk<-regmatches(temp[4], gregexpr("[[:digit:]]+", temp[4]))
-    Einwirk<-max(as.numeric(unlist(Einwirk)))
-    WaeschedesinfektionVAH$Einwirkdauer_min[counter]<-Einwirk
-    WaeschedesinfektionVAH$Flottenverhältnis[counter]<-strsplit(temp[5]," ")[[1]][2]
+GetWaescheVAH<-function(Base=VAH,FullDetails=VAHDetails){
+  
+  detailslength<-sapply(FullDetails,function(x) length(x))
+  products<-which(Base$Anwendungsbereich=="Wäschedesinfektion")
+  WaeschedesinfektionVAH<-Base[products,]
+  #WaeschedesinfektionVAH %>%
+  #  add_column(Anwendungskonzentration=NA,Temperatur_C=NA,Einwirkdauer_min=NA,Flottenverhältnis=NA)
+  
+  #Temperatur und Einwirkzeit: Maximum ?ber den gesamten Prozess
+  counter=1
+  for(i in products){
+    if(detailslength[i]==3){
+      Details<-FullDetails[[i]][[2]]
+      temp<-NULL
+      temp<-strsplit(as.character(VAHDetails[[i]][[2]][2,2]),"\n")
+      temp<-str_trim(temp[[1]],side="both")
+      temp<-temp[nzchar(temp)]
+      WaeschedesinfektionVAH$Anwendungskonzentration[counter]<-temp[2]
+      Temperatur<-temp[3]
+      Temperatur<-regmatches(Temperatur, gregexpr("[[:digit:]]+", Temperatur))
+      Temperatur<-max(as.numeric(unlist(Temperatur)))
+      WaeschedesinfektionVAH$Temperatur_C[counter]<-Temperatur
+      Einwirk<-regmatches(temp[4], gregexpr("[[:digit:]]+", temp[4]))
+      Einwirk<-max(as.numeric(unlist(Einwirk)))
+      WaeschedesinfektionVAH$Einwirkdauer_min[counter]<-Einwirk
+      WaeschedesinfektionVAH$Flottenverhältnis[counter]<-strsplit(temp[5]," ")[[1]][2]
+    }
+    counter<-counter+1
   }
-  counter<-counter+1
-}
 
-#Sonderfall Eltra
-WaeschedesinfektionVAH[which(WaeschedesinfektionVAH$simpleprod=="eltra"),18:20]<-NA
+  #Sonderfall Eltra
+  WaeschedesinfektionVAH[which(WaeschedesinfektionVAH$simpleprod=="eltra"),18:20]<-NA
+  return(WaeschedesinfektionVAH)
+}
+WaeschedesinfektionVAH<-GetWaescheVAH()
 
 
 VAHlist<-list("VAH"=VAH,"Handwaschung"=Handwaschung,"Händedesinfektion"=Haendedesinfektion,"Hautantiseptik"=Hautantiseptik
