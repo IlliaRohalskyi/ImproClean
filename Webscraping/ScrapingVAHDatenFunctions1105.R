@@ -46,30 +46,31 @@ VAHBasis$simpleprod<-gsub("--","-",VAHBasis$simpleprod)
 
 
 #Unregelm??ige Ausnahmen
-VAHBasis$simpleprod[80]<-"ariel-formula-pro"
-VAHBasis$simpleprod[88]<-"aseptoman-pro"
-VAHBasis$simpleprod[128]<-"bechtid-pemium"
-VAHBasis$simpleprod[157]<-"bio-sanitas-incl-duftvarianten-zitronenduft-und-rosmarinduft"
-VAHBasis$simpleprod[175]<-"budenat-intense-d-443"
-VAHBasis$simpleprod[266]<-"dan-klorix-hygienereiniger-auch-gruene-frische-lavendelfrische-zitronenfrische"
-VAHBasis$simpleprod[301]<-"dentoderm-sensitive-hd-gel"
-VAHBasis$simpleprod[329]<-"descosept-sensitive"
-VAHBasis$simpleprod[410]<-"elma-clean-55d-ec-55"
-VAHBasis$simpleprod[434]<-"ew-80-des"
-VAHBasis$simpleprod[452]<-"favorit-wet-wipes-bio-xl-neutral-active"
-VAHBasis$simpleprod[663]<-"kanizid-sensitiv-af-neutrallemonmelonegrapefruit-himbeere-wildrose-green-apple-fresh"
-VAHBasis$simpleprod[745]<-"manupep-haendedesinfekion"
-VAHBasis$simpleprod[800]<-"microsept-fd"
-VAHBasis$simpleprod[801]<-"microsept-fd-in-kombination-mit-quick-clean-wipes"
-VAHBasis$simpleprod[809]<-"sumo-disinfect"
-VAHBasis$simpleprod[864]<-"nordtrade-spruehdesinfektion-lemon"
-VAHBasis$simpleprod[978]<-"pino-septapin-des-extragrosse-tuecher"
-VAHBasis$simpleprod[984]<-"pliwar-lemon-fresh-af-in-den-duftvarianten-gruener-apfel-kokos-ohne-parfuem-pfirsichbluete-und-vanille"
-VAHBasis$simpleprod[1047]<-"pliwar-lemon-fresh-af-in-kombination-mit-quick-clean-s-wipes-lemon-fresh"
-VAHBasis$simpleprod[1148]<-"septliquid-sensitive"
-VAHBasis$simpleprod[1152]<-"pino-septapin-des-desinfektionstuecher"
-VAHBasis$simpleprod[1322]<-"ventisept-wipes-rtu"
-VAHBasis$simpleprod[1330]<-"vinkocide-hde"
+try(VAHBasis$simpleprod[which(VAHBasis$simpleprod=="ariel-formula-pro-plus")]<-"ariel-formula-pro")
+try(VAHBasis$simpleprod[which(VAHBasis$simpleprod=="aseptomanr-pro")]<-"aseptoman-pro")
+try(VAHBasis$simpleprod[which(VAHBasis$simpleprod=="bechtid-premium")]<-"bechtid-pemium")
+try(VAHBasis$simpleprod[which(VAHBasis$simpleprod=="bio-sanitas-protect-incl-duftvarianten-zitronenduft-und-rosmarinduft")]<-"bio-sanitas-incl-duftvarianten-zitronenduft-und-rosmarinduft")
+try(VAHBasis$simpleprod[which(VAHBasis$simpleprod=="budenatr-intense-d-443")]<-"budenat-intense-d-443")
+try(VAHBasis$simpleprod[which(VAHBasis$simpleprod=="dan-klorix-hygienereiniger-original-gruene-frische-lavendel-frische-zitronen-frische")]<-"dan-klorix-hygienereiniger-auch-gruene-frische-lavendelfrische-zitronenfrische")
+try(VAHBasis$simpleprod[which(VAHBasis$simpleprod=="dentodermr-sensitive-hd-gel")]<-"dentoderm-sensitive-hd-gel")
+try(VAHBasis$simpleprod[which(VAHBasis$simpleprod=="descosept-sensitive-inkl-duftvarianten-lemon-fresh-und-fruit")]<-"descosept-sensitive")
+try(VAHBasis$simpleprod[which(VAHBasis$simpleprod=="ec-55")]<-"elma-clean-55d-ec-55")
+try(VAHBasis$simpleprod[which(VAHBasis$simpleprod=="ew80-des")]<-"ew-80-des")
+try(VAHBasis$simpleprod[which(VAHBasis$simpleprod=="favorit-wet-wipes-bio-xl")]<-"favorit-wet-wipes-bio-xl-neutral-active")
+try(VAHBasis$simpleprod[which(VAHBasis$simpleprod=="kanizid-sensitiv-af-neutrallemongrapefruitmelonefresh")]<-"kanizid-sensitiv-af-neutrallemonmelonegrapefruit-himbeere-wildrose-green-apple-fresh")
+try(VAHBasis$simpleprod[which(VAHBasis$simpleprod=="manupep-haendedesinfektion")]<-"manupep-haendedesinfekion")
+try(VAHBasis$simpleprod[which(VAHBasis$simpleprod=="microsept-fd-in-den-duftvarianten-gruener-apfel-ohne-parfuem-pfirsichbluete")]<-"microsept-fd")
+try(VAHBasis$simpleprod[which(VAHBasis$simpleprod=="microsept-fd-quickclean-wipes-inkl-duefte:-neutral-lemon-fresh-melon")]<-"microsept-fd-in-kombination-mit-quick-clean-wipes")
+try(VAHBasis$simpleprod[which(VAHBasis$simpleprod=="mikrozid-power-mops")]<-"sumo-disinfect")
+try(VAHBasis$simpleprod[which(VAHBasis$simpleprod=="nordtrade-spruehdesinfektion-lemon-neutral-apfel-pfirsich")]<-"nordtrade-spruehdesinfektion-lemon")
+try(VAHBasis$simpleprod[which(VAHBasis$simpleprod=="pino-septapin-des-extragrosse-alkoholfreie-tuecher")]<-"pino-septapin-des-extragrosse-tuecher")
+try(VAHBasis$simpleprod[which(VAHBasis$simpleprod=="pliwar-lemon-fresh-af-in-den-duftvarianten-gruener-apfel-ohne-parfuem-pfirsichbluete")]<-"pliwar-lemon-fresh-af-in-den-duftvarianten-gruener-apfel-kokos-ohne-parfuem-pfirsichbluete-und-vanille")
+try(VAHBasis$simpleprod[which(VAHBasis$simpleprod=="quick-clean-s-wipes-lemon-fresh-und-ohne-parfum")]<-"pliwar-lemon-fresh-af-in-kombination-mit-quick-clean-s-wipes-lemon-fresh")
+try(VAHBasis$simpleprod[which(VAHBasis$simpleprod=="sept-liquid-sensitive")]<-"septliquid-sensitive")
+try(VAHBasis$simpleprod[which(VAHBasis$simpleprod=="septapin-des-desinfektionstuecher")]<-"pino-septapin-des-desinfektionstuecher")
+try(VAHBasis$simpleprod[which(VAHBasis$simpleprod=="ventisept-wipes-rtu-inkl-duftvarianten-pur-honigmelone-pink-grapefruit")]<-"ventisept-wipes-rtu")
+try(VAHBasis$simpleprod[which(VAHBasis$simpleprod=="vinkocare-neutral")]<-"vinkocide-hde")
+
 
 #Bindestriche am Ende l?schen
 endings<-str_sub(VAHBasis$simpleprod,start=-1)
