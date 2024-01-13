@@ -1,0 +1,9 @@
+-e .
+black
+isort
+numpy
+pandas
+scikit-learn
+pytest
+pylint
+pyyaml
