@@ -8,23 +8,29 @@ Example:
     config_file = get_cfg("./.cfg/logger.yaml")
     print(f"The logger path is: {config_file['path']}")
 """
-import yaml
 import os
 
-def get_cfg(path, encoding="utf-8"):
+import yaml
+
+
+def get_cfg(cfg_path, encoding="utf-8") -> dict:
     """
     Loads a YAML configuration file from the specified path.
 
     Args:
-        path (str): The path to the YAML configuration file.
+        cfg_path (str): The path to the YAML configuration file from the .cfg directory.
         encoding (str, optional): The encoding to use when reading the file. Defaults to "utf-8".
 
     Returns:
         dict: The YAML configuration file.
     """
+    root_path = get_root()
 
-    with open(path, encoding=encoding) as file:
+    absolute_path = os.path.join(root_path, ".cfg", cfg_path)
+
+    with open(absolute_path, encoding=encoding) as file:
         return yaml.safe_load(file)
+
 
 def get_root() -> str:
     """

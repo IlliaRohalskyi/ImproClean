@@ -10,6 +10,8 @@ import psycopg2
 
 from src.logger import logging
 from src.utility import get_cfg, get_root
+
+
 class DataIngestion:
     """
     Data ingestion class.
@@ -27,7 +29,9 @@ class DataIngestion:
         Args:
             ingestion_config (dict): Configuration settings for data ingestion tasks.
         """
-        self.ingestion_config = get_cfg(os.path.join(get_root(), ".cfg/components/data_ingestion.yaml"))
+        self.ingestion_config = get_cfg(
+            os.path.join(get_root(), ".cfg/components/data_ingestion.yaml")
+        )
 
     def initiate_data_ingestion(self) -> pd.DataFrame:
         """
@@ -42,11 +46,13 @@ class DataIngestion:
 
         logging.info("Initiating data ingestion")
 
-        file_type = self.ingestion_config['training_data_path'].split(".")[-1]
+        file_type = self.ingestion_config["training_data_path"].split(".")[-1]
 
-        file_path = os.path.join(get_root(), self.ingestion_config['training_data_path'])
+        file_path = os.path.join(
+            get_root(), self.ingestion_config["training_data_path"]
+        )
 
-        if file_type == "xls" or file_type == "xlsx":
+        if file_type in ["xls", "xlsx"]:
             data = pd.read_excel(file_path)
         elif file_type == "csv":
             data = pd.read_csv(file_path)
@@ -57,7 +63,7 @@ class DataIngestion:
         logging.info("Data ingestion completed successfully")
         return data
 
-    def get_sql_table(self, table_name):
+    def get_sql_table(self, table_name) -> pd.DataFrame:
         """
         Initiate the data ingestion process from a Postgres database.
 
@@ -76,20 +82,54 @@ class DataIngestion:
                 host=hostname, database=database_name, user=username, password=password
             )
 
-        except psycopg2.ConnectionError as e:
+        except ConnectionException as e:
             logging.error("Error connecting to PostgreSQL:", e)
 
         query = f"SELECT * FROM {table_name};"
 
         try:
-            pd.read_sql_query(query, connection)
-        except Exception as e:
+            data = pd.read_sql_query(query, connection)
+        except ReadingError as e:
             logging.error("Error executing SQL query:", e)
 
-        finally:
-            if connection:
-                connection.close()
+        if connection:
+            connection.close()
+        return data
+
 
 class UnsupportedFileTypeError(Exception):
+    """
+    Exception raised when an unsupported file type is encountered during data ingestion.
+
+    Args:
+        file_type (str): The file type that is not supported.
+    """
+
     def __init__(self, file_type):
-        super().__init__(f"The file type '{file_type}' is not supported. Supported file types are: .xlsx, .xls, and .csv.")
+        super().__init__(
+            f"The file type '{file_type}' is not supported. Supported file types are:"
+            f" .xlsx, .xls, and .csv."
+        )
+
+
+class ConnectionException(Exception):
+    """
+    Exception raised when an error occurs while establishing a connection
+    to the PostgreSQL database.
+    """
+
+    def __init__(self):
+        super().__init__(
+            "Connection error. Please verify your database credentials "
+            "and check database availability."
+        )
+
+
+class ReadingError(Exception):
+    """
+    Exception raised when an error occurs while reading data
+    from the PostgreSQL database.
+    """
+
+    def __init__(self):
+        super().__init__("Reading error. Failed to read the data from the database.")

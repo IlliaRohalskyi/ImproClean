@@ -16,7 +16,7 @@ from datetime import datetime
 
 from src.utility import get_cfg
 
-config = get_cfg("./.cfg/logger.yaml")
+config = get_cfg("logger.yaml")
 
 LOG_FILE = f"{datetime.now().strftime('%d_%m_%Y_%H_%M_%S')}.log"
 logs_path = os.path.join(config["path"], "logs", LOG_FILE)

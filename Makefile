@@ -1,5 +1,5 @@
 lint:
-	pylint src
+	pylint src test
 
 format:
 	@echo "Running black..."
@@ -8,4 +8,6 @@ format:
 	@isort .
 	@echo "Formatting complete!"
 
-.PHONY: lint format
+test:
+	pytest test
+.PHONY: lint format test
