@@ -93,6 +93,3 @@ class DataIngestion:
 class UnsupportedFileTypeError(Exception):
     def __init__(self, file_type):
         super().__init__(f"The file type '{file_type}' is not supported. Supported file types are: .xlsx, .xls, and .csv.")
-
-if __name__ == '__main__':
-    print(DataIngestion().initiate_data_ingestion())
