@@ -1,1 +1,1 @@
-training_data_path: test/synthetic_data/synthetic_unformatted.xlsx
+training_data_folder_path: test/synthetic_data/unformatted

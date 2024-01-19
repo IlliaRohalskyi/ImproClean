@@ -3,7 +3,8 @@ Test Data Ingestion.
 
 This module contains test case for the DataIngestion class from the data_ingestion module.
 """
-from test.test_utility import upload_data
+import os
+from test.test_utility import create_synthetic_data, upload_data
 
 import pandas as pd
 import pytest
@@ -59,8 +60,13 @@ def test_sql_ingestion(data_ingestion_object):
     Args:
         data_ingestion_object (DataIngestion): An instance of the DataIngestion class..
     """
-    upload_data(
-        "test/synthetic_data/synthetic_unformatted.xlsx", "synthetic_unformatted"
+
+    synthetic_data = create_synthetic_data()
+    data_path = os.path.join(
+        data_ingestion_object.ingestion_config["training_data_folder_path"],
+        "synthetic_unformatted.xlsx",
     )
+    synthetic_data.to_excel(data_path)
+    upload_data(data_path, "synthetic_unformatted")
     data = data_ingestion_object.get_sql_table("synthetic_unformatted")
     assert isinstance(data, pd.DataFrame), "SQL data should be a DataFrame"

@@ -8,6 +8,10 @@ import os
 import pandas as pd
 import psycopg2
 
+from src.exceptions.data_ingestion_exceptions import (ConnectionException,
+                                                      MultipleFilesError,
+                                                      ReadingError,
+                                                      UnsupportedFileTypeError)
 from src.logger import logging
 from src.utility import get_cfg, get_root
 
@@ -19,7 +23,7 @@ class DataIngestion:
     This class provides a method for data ingestion tasks.
 
     Attributes:
-        ingestion_config (DataIngestionConfig): The configuration settings for data ingestion tasks.
+        ingestion_config (dict): The configuration settings for data ingestion tasks.
     """
 
     def __init__(self):
@@ -33,12 +37,52 @@ class DataIngestion:
             os.path.join(get_root(), ".cfg/components/data_ingestion.yaml")
         )
 
+    def _get_supported_file(self) -> str:
+        """
+        Retrieve the supported training data file from the specified directory.
+
+        This method checks the training data folder for files with supported extensions
+        (xls, xlsx, csv) and returns the matching file.
+        If no supported files are found, an `UnsupportedFileTypeError` is raised.
+        If more than one supported file is found, a `MultipleFilesError` is raised.
+
+        Returns:
+            str: Path to the supported training data file
+        """
+        dir_path = os.path.join(
+            get_root(), self.ingestion_config["training_data_folder_path"]
+        )
+
+        file_list = os.listdir(dir_path)
+
+        supported_file_types = ["xls", "xlsx", "csv"]
+
+        supported_files = []
+
+        for file_name in file_list:
+            file_extension = file_name.split(".")[-1]
+            if file_extension in supported_file_types:
+                supported_files.append(os.path.join(dir_path, file_name))
+
+        if not supported_files:
+            logging.error("No supported files found in the training data folder")
+            raise UnsupportedFileTypeError(dir_path)
+
+        if len(supported_files) > 1:
+            logging.error(
+                "Only one file of supported format (xlsx, xls, csv) "
+                "should exist in the training data folder"
+            )
+            raise MultipleFilesError
+
+        return supported_files[0]
+
     def initiate_data_ingestion(self) -> pd.DataFrame:
         """
         Initiate the data ingestion process.
 
-        This method triggers the ingestion of data as specified
-        in the configuration. It returns the pandas dataframe
+        This method triggers the ingestion of data.
+        It returns the pandas dataframe
 
         Returns:
             pandas.DataFrame: A DataFrame containing the ingested training data
@@ -46,19 +90,12 @@ class DataIngestion:
 
         logging.info("Initiating data ingestion")
 
-        file_type = self.ingestion_config["training_data_path"].split(".")[-1]
+        supported_file = self._get_supported_file()
 
-        file_path = os.path.join(
-            get_root(), self.ingestion_config["training_data_path"]
-        )
-
-        if file_type in ["xls", "xlsx"]:
-            data = pd.read_excel(file_path)
-        elif file_type == "csv":
-            data = pd.read_csv(file_path)
+        if supported_file.endswith("csv"):
+            data = pd.read_csv(supported_file)
         else:
-            logging.error("Unsupported data type error")
-            raise UnsupportedFileTypeError(file_type)
+            data = pd.read_excel(supported_file)
 
         logging.info("Data ingestion completed successfully")
         return data
@@ -95,41 +132,3 @@ class DataIngestion:
         if connection:
             connection.close()
         return data
-
-
-class UnsupportedFileTypeError(Exception):
-    """
-    Exception raised when an unsupported file type is encountered during data ingestion.
-
-    Args:
-        file_type (str): The file type that is not supported.
-    """
-
-    def __init__(self, file_type):
-        super().__init__(
-            f"The file type '{file_type}' is not supported. Supported file types are:"
-            f" .xlsx, .xls, and .csv."
-        )
-
-
-class ConnectionException(Exception):
-    """
-    Exception raised when an error occurs while establishing a connection
-    to the PostgreSQL database.
-    """
-
-    def __init__(self):
-        super().__init__(
-            "Connection error. Please verify your database credentials "
-            "and check database availability."
-        )
-
-
-class ReadingError(Exception):
-    """
-    Exception raised when an error occurs while reading data
-    from the PostgreSQL database.
-    """
-
-    def __init__(self):
-        super().__init__("Reading error. Failed to read the data from the database.")
