@@ -60,13 +60,11 @@ def test_sql_ingestion(data_ingestion_object):
     Args:
         data_ingestion_object (DataIngestion): An instance of the DataIngestion class..
     """
-
-    synthetic_data = create_synthetic_data()
     data_path = os.path.join(
         data_ingestion_object.ingestion_config["training_data_folder_path"],
         "synthetic_unformatted.xlsx",
     )
-    synthetic_data.to_excel(data_path)
+
     upload_data(data_path, "synthetic_unformatted")
     data = data_ingestion_object.get_sql_table("synthetic_unformatted")
     assert isinstance(data, pd.DataFrame), "SQL data should be a DataFrame"
