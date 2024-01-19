@@ -4,7 +4,7 @@ Test Data Ingestion.
 This module contains test case for the DataIngestion class from the data_ingestion module.
 """
 import os
-from test.test_utility import create_synthetic_data, upload_data
+from test.test_utility import upload_data
 
 import pandas as pd
 import pytest
