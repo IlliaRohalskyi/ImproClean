@@ -1,4 +1,7 @@
+awscliv2
 black
+dvc
+dvc[s3]
 isort
 numpy
 pandas
