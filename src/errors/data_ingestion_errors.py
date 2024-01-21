@@ -1,11 +1,11 @@
 """
-This module contains all the exceptions for data_ingestion.py module
+This module contains all the errors for data_ingestion.py module
 """
 
 
 class UnsupportedFileTypeError(Exception):
     """
-    Exception raised when an unsupported file type is encountered during data ingestion.
+    Error that is raised when an unsupported file type is encountered during data ingestion.
 
     Args:
         file_type (str): The file type that is not supported.
@@ -18,9 +18,9 @@ class UnsupportedFileTypeError(Exception):
         )
 
 
-class ConnectionException(Exception):
+class PostgreSQLConnectionError(Exception):
     """
-    Exception raised when an error occurs while establishing a connection
+    Error that is raised when an error occurs while establishing a connection
     to the PostgreSQL database.
     """
 
@@ -33,7 +33,7 @@ class ConnectionException(Exception):
 
 class ReadingError(Exception):
     """
-    Exception raised when an error occurs while reading data
+    Error that is raised when an error occurs while reading data
     from the PostgreSQL database.
     """
 
@@ -43,7 +43,7 @@ class ReadingError(Exception):
 
 class MultipleFilesError(Exception):
     """
-    Exception raised when the folder has multiple files, that could be read.
+    Error that is raised when the folder has multiple files, that could be read.
     The folder should have only one data file
     """
 

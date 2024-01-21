@@ -8,10 +8,9 @@ import os
 import pandas as pd
 import psycopg2
 
-from src.exceptions.data_ingestion_exceptions import (ConnectionException,
-                                                      MultipleFilesError,
-                                                      ReadingError,
-                                                      UnsupportedFileTypeError)
+from src.errors.data_ingestion_errors import (PostgreSQLConnectionError,
+                                              MultipleFilesError, ReadingError,
+                                              UnsupportedFileTypeError)
 from src.logger import logging
 from src.utility import get_cfg, get_root
 
@@ -119,9 +118,9 @@ class DataIngestion:
                 host=hostname, database=database_name, user=username, password=password
             )
 
-        except ConnectionException as e:
+        except PostgreSQLConnectionError as e:
             logging.error("Error connecting to PostgreSQL:", e)
-
+            raise e
         query = f"SELECT * FROM {table_name};"
 
         try:
