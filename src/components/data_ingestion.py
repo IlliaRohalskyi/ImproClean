@@ -8,8 +8,9 @@ import os
 import pandas as pd
 import psycopg2
 
-from src.errors.data_ingestion_errors import (PostgreSQLConnectionError,
-                                              MultipleFilesError, ReadingError,
+from src.errors.data_ingestion_errors import (MultipleFilesError,
+                                              PostgreSQLConnectionError,
+                                              ReadingError,
                                               UnsupportedFileTypeError)
 from src.logger import logging
 from src.utility import get_cfg, get_root
@@ -29,12 +30,10 @@ class DataIngestion:
         """
         Initialize the DataIngestion instance.
 
-        Args:
-            ingestion_config (dict): Configuration settings for data ingestion tasks.
+        Attributes:
+            self.ingestion_config (dict): Configuration settings for data ingestion tasks.
         """
-        self.ingestion_config = get_cfg(
-            os.path.join(get_root(), ".cfg/components/data_ingestion.yaml")
-        )
+        self.ingestion_config = get_cfg("components/data_ingestion.yaml")
 
     def _get_supported_file(self) -> str:
         """

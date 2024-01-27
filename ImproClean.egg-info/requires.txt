@@ -11,5 +11,6 @@ psycopg2-binary
 pytest
 pylint
 pyyaml
+scipy
 sqlalchemy
 pre-commit

@@ -10,8 +10,10 @@ src/logger.py
 src/utility.py
 src/components/__init__.py
 src/components/data_ingestion.py
-src/exceptions/__init__.py
-src/exceptions/data_ingestion_exceptions.py
+src/components/data_transformation.py
+src/components/data_validation.py
+src/errors/__init__.py
+src/errors/data_ingestion_errors.py
 test/__init__.py
 test/test_utility.py
 test/unit/__init__.py
