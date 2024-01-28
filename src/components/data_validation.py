@@ -3,6 +3,7 @@ This module provides data validation capabilities for both training and predicti
 It can be employed to assess data quality
 """
 import logging
+import warnings
 from typing import List
 
 from scipy.stats import chisquare, ks_2samp
@@ -111,6 +112,7 @@ class DataValidation:
         if nan_message == "nan_nonimputable":
             logging.error("NanError encountered")
             raise NanError
+
         validation_issues.append(nan_message)
 
         if not all(pred_df.columns == train_df.columns):
@@ -120,37 +122,34 @@ class DataValidation:
             logging.error("DtypeDiffError encountered")
             raise DtypeDiffError
 
-        validation_issues.append(self.check_data_drift(pred_df, train_df))
+        self.check_data_drift(pred_df, train_df)
         return validation_issues
 
-    def check_data_drift(self, pred_df, train_df) -> str:
+    def check_data_drift(self, pred_df, train_df):
         """
         Checks for data drift between the prediction data and the training data.
 
         Args:
             pred_df (pd.DataFrame): The prediction data to be compared against the training data.
             train_df (pd.DataFrame): The training data to be used as the reference data.
-
-        Returns:
-            str: A message indicating the type of data drift detected (if any).
-
-            Possible values:
-                None: No data drift detected.
-                "numeric_drift": Data drift detected in numerical features.
-                "cat_drift": Data drift detected in categorical features.
         """
+
         drift_thresh = self.validation_config["drift_thresh"]
         cat_cols = self.validation_config["cat_cols"]
         num_cols = [col for col in pred_df.columns if col not in cat_cols]
         for column in num_cols:
             _, p_value = ks_2samp(pred_df[column], train_df[column])
             if p_value < drift_thresh:
-                return "numeric_drift"
+                warnings.warn(
+                    f"Numerical drift detected in column {column}. Proceeding..."
+                )
+                logging.info("Numerical drift detected in column %s", column)
 
         if cat_cols:
             for column in cat_cols:
                 _, p_value = chisquare(f_obs=pred_df[column], f_exp=train_df[column])
                 if p_value < drift_thresh:
-                    return "cat_drift"
-
-        return None
+                    warnings.warn(
+                        f"Categorical drift detected in column {column}. Proceeding..."
+                    )
+                    logging.info("Categorical drift detected in column %s", column)

@@ -14,6 +14,7 @@ src/components/data_transformation.py
 src/components/data_validation.py
 src/errors/__init__.py
 src/errors/data_ingestion_errors.py
+src/errors/data_validation_errors.py
 test/__init__.py
 test/test_utility.py
 test/unit/__init__.py

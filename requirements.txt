@@ -4,6 +4,7 @@ black
 dvc
 dvc[s3]
 isort
+miceforest
 numpy
 pandas
 scikit-learn
