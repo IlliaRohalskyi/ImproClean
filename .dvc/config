@@ -1,4 +1,6 @@
 [core]
-    remote = myremote
+    remote = datastore
 ['remote "myremote"']
     url = s3://improclean-dvc
+['remote "datastore"']
+    url = s3://None
