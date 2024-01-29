@@ -12,7 +12,6 @@ def load_dvc():
     """
     aws_access_key_id = os.environ.get("AWS_ACCESS_KEY_ID")
     aws_secret_access_key = os.environ.get("AWS_SECRET_ACCESS_KEY")
-    s3_bucket_name = os.environ.get("DVC_BUCKET_NAME")
 
     # Execute the aws configure command with the provided parameters
     subprocess.call(["aws", "configure", "set", "aws_access_key_id", aws_access_key_id])
