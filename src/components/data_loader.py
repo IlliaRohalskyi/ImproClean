@@ -19,9 +19,6 @@ def load_dvc():
     subprocess.call(
         ["aws", "configure", "set", "aws_secret_access_key", aws_secret_access_key]
     )
-    subprocess.call(
-        ["dvc", "remote", "add", "--default", "datastore", f"s3://{s3_bucket_name}"]
-    )
 
     subprocess.run(["dvc", "pull"], check=True)
 
