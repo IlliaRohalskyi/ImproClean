@@ -121,14 +121,10 @@ def test_clean_data(data_transformation_object, synthetic_data):
     )
 
     # Assert if there are any duplicates
-    assert (
-        clean_data.duplicated().any() is False
-    ), "clean_data should have no duplicates"
+    assert not clean_data.duplicated().any(), "clean_data should have no duplicates"
 
     # Assert if there are NaN values
-    assert (
-        clean_data.isnull().values.any() is False
-    ), "clean_data should have no NaN values"
+    assert not clean_data.isnull().values.any(), "clean_data should have no NaN values"
 
     # Assert if columns are different
     assert any(
