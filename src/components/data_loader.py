@@ -13,7 +13,6 @@ def load_dvc():
     aws_access_key_id = os.environ.get("AWS_ACCESS_KEY_ID")
     aws_secret_access_key = os.environ.get("AWS_SECRET_ACCESS_KEY")
 
-    # Execute the aws configure command with the provided parameters
     subprocess.call(["aws", "configure", "set", "aws_access_key_id", aws_access_key_id])
     subprocess.call(
         ["aws", "configure", "set", "aws_secret_access_key", aws_secret_access_key]

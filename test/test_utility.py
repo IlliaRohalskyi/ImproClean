@@ -11,11 +11,10 @@ import numpy as np
 import pandas as pd
 from sqlalchemy import create_engine
 
-from src.components.data_ingestion import DataIngestion
 from src.utility import get_cfg, get_root
 
 
-def create_synthetic_data():
+def create_synthetic_data() -> pd.DataFrame:
     """
     Creates synthetic data based on the configuration file.
 
@@ -25,8 +24,10 @@ def create_synthetic_data():
     config = get_cfg("test/test_utility.yaml")
     row_count = config["row_count"]
 
-    df = DataIngestion().initiate_data_ingestion()
-
+    path = os.path.join(
+        get_root(), "test/synthetic_data/unformatted/synthetic_unformatted.xlsx"
+    )
+    df = pd.read_excel(path)
     synthetic_df = pd.DataFrame(np.random.normal(size=(row_count, len(df.columns))))
 
     synthetic_df.columns = df.columns

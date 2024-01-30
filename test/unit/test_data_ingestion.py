@@ -1,7 +1,8 @@
 """
 Test Data Ingestion.
 
-This module contains test case for the DataIngestion class from the data_ingestion module.
+This module contains test cases for the DataIngestion class
+ from the data_ingestion module.
 """
 import os
 from test.test_utility import upload_data
@@ -19,7 +20,7 @@ def fixture_data_ingestion_object():
     Fixture for DataIngestion Object.
 
     This fixture creates and returns an instance of the DataIngestion class.
-    Changes the path of the offline and online data to the test files
+    Changes the path of the data to the test file
 
     Returns:
         DataIngestion: An instance of the DataIngestion class.
@@ -44,7 +45,7 @@ def test_data_ingestion(data_ingestion_object):
     df = data_ingestion_object.initiate_data_ingestion()
 
     # Check data types
-    assert isinstance(df, pd.DataFrame), "Online data should be a DataFrame"
+    assert isinstance(df, pd.DataFrame), "Ingested data should be a DataFrame"
 
     # Check if dataframes are not empty
     assert not df.empty, "Dataframe should not be empty"

@@ -94,16 +94,20 @@ class DataTransformation:
             The cleaned DataFrame.
         """
         logging.info("Data cleaning started")
-        if "nan-imputable" in validation_issues:
-            logging.info("Imputing NaN")
-            kds = mf.ImputationKernel(df, save_all_iterations=True, random_state=42)
-            kds.mice(10)
-            df = kds.complete_data()
 
         if "duplicates" in validation_issues:
             logging.info("Removing duplicates")
             df.drop_duplicates(inplace=True)
 
+        if "nan_imputable" in validation_issues:
+            logging.info("Imputing NaN")
+            df_array = df.to_numpy()
+            kds = mf.ImputationKernel(
+                df_array, save_all_iterations=True, random_state=42
+            )
+            kds.mice(10)
+            imputed_array = kds.complete_data()
+            df = pd.DataFrame(imputed_array, columns=df.columns)
         return df
 
     def create_train_test_split(self, transformed_data) -> TrainTestData:
@@ -125,11 +129,35 @@ class DataTransformation:
             random_state=42,
         )
 
-        x_train = train_data.iloc[:, :-2]
-        y_train = train_data.iloc[:, -2:]
+        y_train = train_data[
+            [
+                col
+                for col in train_data.columns
+                if col.startswith("Red KBE") or col.startswith("Energie")
+            ]
+        ]
+        x_train = train_data[
+            [
+                col
+                for col in train_data.columns
+                if not col.startswith("Red KBE") and not col.startswith("Energie")
+            ]
+        ]
 
-        x_test = test_data.iloc[:, :-2]
-        y_test = test_data.iloc[:, -2:]
+        y_test = test_data[
+            [
+                col
+                for col in test_data.columns
+                if col.startswith("Red KBE") or col.startswith("Energie")
+            ]
+        ]
+        x_test = test_data[
+            [
+                col
+                for col in test_data.columns
+                if not col.startswith("Red KBE") and not col.startswith("Energie")
+            ]
+        ]
 
         return TrainTestData(
             x_train=np.array(x_train),
