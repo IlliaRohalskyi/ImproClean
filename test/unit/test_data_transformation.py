@@ -4,9 +4,12 @@ Test Data Transformation.
 This module contains test cases for the DataTransformation class
 from the data_transformation module.
 """
-from test.test_utility import create_synthetic_data
+from test.test_utility import (
+    create_duplicated_data,
+    create_nan_data,
+    create_synthetic_data,
+)
 
-import numpy as np
 import pandas as pd
 import pytest
 
@@ -32,20 +35,7 @@ def fixture_transformation_object():
     return data_transformation_object
 
 
-@pytest.fixture(name="synthetic_data")
-def fixture_synthetic_data():
-    """
-    Fixture for Synthetic Data
-
-    This fixture creates and returns sample data
-
-    Returns:
-        pd.DataFrame: Synthetic data for test cases
-    """
-    return create_synthetic_data()
-
-
-def test_data_selection(data_transformation_object, synthetic_data):
+def test_data_selection(data_transformation_object):
     """
     Test Data Selection Functionality.
 
@@ -54,8 +44,8 @@ def test_data_selection(data_transformation_object, synthetic_data):
 
     Args:
         data_transformation_object (DataTransformation): An instance of the DataTransformation class
-        synthetic_data (pd.DataFrame): Synthetic data
     """
+    synthetic_data = create_synthetic_data()
     selected_data = data_transformation_object.select_data(synthetic_data)
 
     # Check data types
@@ -70,7 +60,7 @@ def test_data_selection(data_transformation_object, synthetic_data):
     assert len(synthetic_data.columns) > len(selected_data.columns)
 
 
-def test_train_test_split(data_transformation_object, synthetic_data):
+def test_train_test_split(data_transformation_object):
     """
     Test Data Train Test Split Functionality.
 
@@ -79,8 +69,8 @@ def test_train_test_split(data_transformation_object, synthetic_data):
 
     Args:
         data_transformation_object (DataTransformation): An instance of the DataTransformation class
-        synthetic_data (pd.DataFrame): Synthetic data
     """
+    synthetic_data = create_synthetic_data()
     train_test_split = data_transformation_object.create_train_test_split(
         synthetic_data
     )
@@ -95,7 +85,7 @@ def test_train_test_split(data_transformation_object, synthetic_data):
     ), "Wrong target selection"
 
 
-def test_clean_data(data_transformation_object, synthetic_data):
+def test_clean_data(data_transformation_object):
     """
     Test Data Cleaning Functionality.
 
@@ -104,18 +94,10 @@ def test_clean_data(data_transformation_object, synthetic_data):
 
     Args:
         data_transformation_object (DataTransformation): An instance of the DataTransformation class
-        synthetic_data (pd.DataFrame): Synthetic data
     """
-    rand_col_idx = np.random.randint(0, len(synthetic_data.columns))
+    nan_data = create_nan_data()
+    synthetic_data = create_duplicated_data(nan_data)
 
-    nan_percent = 0.05
-    mask = np.random.choice(
-        [False, True], size=synthetic_data.shape[0], p=[1 - nan_percent, nan_percent]
-    )
-    synthetic_data.iloc[:, rand_col_idx][mask] = np.nan
-    synthetic_data_duplicated = pd.concat(
-        [synthetic_data, synthetic_data.sample(50)], ignore_index=True
-    )
     clean_data = data_transformation_object.clean_data(
         synthetic_data, ["nan_imputable", "duplicates"]
     )
@@ -128,5 +110,5 @@ def test_clean_data(data_transformation_object, synthetic_data):
 
     # Assert if columns are different
     assert any(
-        synthetic_data_duplicated.columns == clean_data.columns
+        synthetic_data.columns == clean_data.columns
     ), "clean_data columns should not be changed"

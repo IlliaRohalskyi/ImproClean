@@ -6,10 +6,9 @@ import logging
 import warnings
 from typing import List
 
-from scipy.stats import chisquare, ks_2samp
+from scipy.stats import kruskal, ks_2samp
 
-from src.errors.data_validation_errors import (ColumnsDiffError,
-                                               DtypeDiffError, NanError)
+from src.errors.data_validation_errors import ColumnsDiffError, DtypeDiffError, NanError
 from src.utility import get_cfg
 
 
@@ -33,12 +32,12 @@ class DataValidation:
         """
         self.validation_config = get_cfg("components/data_validation.yaml")
 
-    def check_nan(self, df) -> str:
+    def _check_nan(self, data) -> str:
         """
         Checks for NaN values in the provided DataFrame.
 
         Args:
-            df (pandas.DataFrame): The DataFrame to be checked.
+            data (pandas.DataFrame): The DataFrame to be checked.
 
         Returns:
             str: Indicates the presence of NaN values:
@@ -49,6 +48,7 @@ class DataValidation:
         logging.info("Checking for NaN values")
         nan_thresh = self.validation_config["nan_thresh"]
         nan_present = False
+        df = data.drop_duplicates()
         for column in df:
             nan_count = df[column].isna().sum()
             if nan_count / len(df) > nan_thresh:
@@ -70,19 +70,19 @@ class DataValidation:
 
         Returns:
             List[str]: A list of validation issues identified, including:
-                - "nan_nonimputable": If NaN count exceeds the threshold
                 - "nan_imputable": If NaN count is present but below the threshold
                 - "duplicates": If the DataFrame contains duplicate rows
         """
         logging.info("Validating training data")
 
         validation_issues = []
-        nan_message = self.check_nan(train_df)
+        nan_message = self._check_nan(train_df)
 
         if nan_message == "nan_nonimputable":
             logging.error("NanError encountered")
             raise NanError
-        validation_issues.append(nan_message)
+        if nan_message is not None:
+            validation_issues.append(nan_message)
 
         duplicates_present = train_df.duplicated().any()
         if duplicates_present:
@@ -99,15 +99,12 @@ class DataValidation:
 
         Returns:
             List[str]: A list of validation issues identified, including:
-                - "nan_nonimputable": If NaN count exceeds the threshold
                 - "nan_imputable": If NaN count is present but below the threshold
-                - "numeric_drift": If numeric distributions differ significantly
-                - "cat_drift": If categorical distributions differ significantly
         """
         logging.info("Validating prediction data")
 
         validation_issues = []
-        nan_message = self.check_nan(pred_df)
+        nan_message = self._check_nan(pred_df)
 
         if nan_message == "nan_nonimputable":
             logging.error("NanError encountered")
@@ -122,12 +119,13 @@ class DataValidation:
             logging.error("DtypeDiffError encountered")
             raise DtypeDiffError
 
-        self.check_data_drift(pred_df, train_df)
+        self._check_data_drift(pred_df, train_df)
         return validation_issues
 
-    def check_data_drift(self, pred_df, train_df):
+    def _check_data_drift(self, pred_df, train_df):
         """
         Checks for data drift between the prediction data and the training data.
+        If present, warning is raised.
 
         Args:
             pred_df (pd.DataFrame): The prediction data to be compared against the training data.
@@ -145,9 +143,9 @@ class DataValidation:
                 )
                 logging.info("Numerical drift detected in column %s", column)
 
-        if cat_cols:
+        if cat_cols != [None]:
             for column in cat_cols:
-                _, p_value = chisquare(f_obs=pred_df[column], f_exp=train_df[column])
+                _, p_value = kruskal(pred_df[column], train_df[column])
                 if p_value < drift_thresh:
                     warnings.warn(
                         f"Categorical drift detected in column {column}. Proceeding..."
