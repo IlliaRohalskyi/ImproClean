@@ -63,6 +63,9 @@ def create_nan_data(nan_percent=0.05):
     """
     Creates synthetic data with NaN values.
 
+    Args:
+        nan_percent (float): Percentage of nan values
+
     Returns:
         pd.DataFrame: A synthetic DataFrame with NaN values.
     """
@@ -75,9 +78,13 @@ def create_nan_data(nan_percent=0.05):
     return synthetic_data
 
 
-def create_duplicated_data(data, fraction=0.05):
+def create_duplicated_data(data, fraction=0.05) -> pd.DataFrame:
     """
     Creates synthetic duplicated data.
+
+    Args:
+        data (pd.DataFrame): The data to which duplicates will be added
+        fraction (float): Fraction of added duplicates
 
     Returns:
         pd.DataFrame: A synthetic DataFrame with duplicated values.
@@ -87,3 +94,20 @@ def create_duplicated_data(data, fraction=0.05):
     duplicated_data = data.loc[duplicated_indices]
     result_data = pd.concat([data, duplicated_data], ignore_index=True)
     return result_data
+
+
+def create_cat_col(data, p, colname="test_cat_col") -> pd.DataFrame:
+    """
+    Creates a column with a synthetic categorical data.
+
+    Args:
+        data (pd.DataFrame): Dataframe to which to add synthetic categorical column
+        p (List[float]: List containing 3 p-values corresponding to each category
+        colname (str): name of a column with categorical data
+
+    Returns:
+        pd.DataFrame: A synthetic Dataframe with a categorical column
+    """
+    categories = [0, 1, 2]
+    data[colname] = np.random.choice(categories, size=len(data), p=p)
+    return data

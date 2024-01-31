@@ -5,12 +5,12 @@ This module contains test cases for the DataValidation class
 from the data_validation module.
 """
 from test.test_utility import (
+    create_cat_col,
     create_duplicated_data,
     create_nan_data,
     create_synthetic_data,
 )
 
-import numpy as np
 import pytest
 
 from src.components.data_validation import DataValidation
@@ -100,13 +100,10 @@ def test_prediction_validation(data_validation_object):
         data_validation_object.check_prediction_data(diff_dtype_data, synthetic_data)
 
     nan_data_imputable = create_nan_data() + 1000
-    categories = [0, 1, 2]
-    nan_data_imputable["test_cat_col"] = np.random.choice(
-        categories, size=len(nan_data_imputable), p=[0.65, 0.05, 0.3]
-    )
-    synthetic_data["test_cat_col"] = np.random.choice(
-        categories, size=len(synthetic_data), p=[0.3, 0.05, 0.65]
-    )
+
+    nan_data_imputable = create_cat_col(nan_data_imputable, [0.65, 0.3, 0.05])
+    synthetic_data = create_cat_col(synthetic_data, [0.3, 0.05, 0.65])
+
     with pytest.warns(UserWarning, match="drift detected in column"):
         val_issues = data_validation_object.check_prediction_data(
             nan_data_imputable, synthetic_data
