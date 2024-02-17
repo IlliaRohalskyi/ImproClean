@@ -1,0 +1,6 @@
+models:
+  - xgb
+  - rf
+startup_trials: 10
+total_trials: 100
+explainability_path: explainability

@@ -8,10 +8,12 @@ import os
 import pandas as pd
 import psycopg2
 
-from src.errors.data_ingestion_errors import (MultipleFilesError,
-                                              PostgreSQLConnectionError,
-                                              ReadingError,
-                                              UnsupportedFileTypeError)
+from src.errors.data_ingestion_errors import (
+    MultipleFilesError,
+    PostgreSQLConnectionError,
+    ReadingError,
+    UnsupportedFileTypeError,
+)
 from src.logger import logging
 from src.utility import get_cfg, get_root
 
@@ -103,6 +105,9 @@ class DataIngestion:
         Initiate the data ingestion process from a Postgres database.
 
         This method triggers the ingestion of data from the database
+
+        Args:
+            table_name (str): The name of the table
 
         Returns:
             pandas.DataFrame: A DataFrame containing the ingested data.
