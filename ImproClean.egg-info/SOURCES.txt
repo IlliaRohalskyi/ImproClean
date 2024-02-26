@@ -13,13 +13,15 @@ src/components/data_ingestion.py
 src/components/data_loader.py
 src/components/data_transformation.py
 src/components/data_validation.py
-src/components/model_training.py
+src/components/model_trainer.py
 src/errors/__init__.py
 src/errors/data_ingestion_errors.py
 src/errors/data_validation_errors.py
+src/errors/model_training_errors.py
 test/__init__.py
 test/test_utility.py
 test/unit/__init__.py
 test/unit/test_data_ingestion.py
 test/unit/test_data_transformation.py
 test/unit/test_data_validation.py
+test/unit/test_model_trainer.py

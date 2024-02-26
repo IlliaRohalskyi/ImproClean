@@ -1,2 +1,17 @@
-column_startswith:
-  - all
+features:
+  - GH
+  - Temperatur
+  - Konzentration
+  - Zeit
+  - oberfla
+  - csb
+  - truebung
+  - chlor
+  - Feuchte
+  - druck
+  - fluss
+  - ph
+  - leitfaehigkeit
+  - Silikat
+  - temperatur
+  - abs

@@ -61,7 +61,7 @@ class DataTransformation:
 
         """
         logging.info("Selecting the data")
-        column_startswith = self.transformation_config["column_startswith"]
+        column_startswith = self.transformation_config["features"]
 
         if "all" in column_startswith:
             start_names = (

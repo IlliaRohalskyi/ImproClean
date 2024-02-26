@@ -8,7 +8,8 @@ matplotlib
 miceforest
 mlflow
 numpy
-pandas
+pandas==2.1.4
+prefect
 pre-commit
 scikit-learn
 openpyxl

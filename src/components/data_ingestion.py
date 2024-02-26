@@ -135,3 +135,10 @@ class DataIngestion:
         if connection:
             connection.close()
         return data
+
+
+if __name__ == "__main__":
+    import sys
+
+    for path in sys.path:
+        print(path)

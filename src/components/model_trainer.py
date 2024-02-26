@@ -56,12 +56,12 @@ class ModelTrainer:
         self.current_model_name = None
         self.data = train_test_data
         self.git_hash = self._get_git_hash()
-        self.cfg = get_cfg("components/model_training.yaml")
+        self.train_config = get_cfg("components/model_training.yaml")
         self.explainability_path = os.path.join(
-            get_root(), self.cfg["explainability_path"]
+            get_root(), self.train_config["explainability_path"]
         )
 
-    def _train_model(self, model_name, params):
+    def train_model(self, model_name, params):
         """
         Train a machine learning model.
 
@@ -173,7 +173,7 @@ class ModelTrainer:
         """
         logging.info("Starting model training")
 
-        models = self.cfg["models"]
+        models = self.train_config["models"]
 
         with mlflow.start_run():
             mlflow.log_param("git_hash", self.git_hash)
@@ -185,13 +185,13 @@ class ModelTrainer:
                 self.current_model_name = model_name
 
                 sampler = optuna.samplers.TPESampler(
-                    seed=42, n_startup_trials=self.cfg["startup_trials"]
+                    seed=42, n_startup_trials=self.train_config["startup_trials"]
                 )
                 study = optuna.create_study(direction="minimize", sampler=sampler)
                 logging.info("Starting hyperparameter tuning")
                 study.optimize(
                     self.objective,
-                    n_trials=self.cfg["total_trials"],
+                    n_trials=self.train_config["total_trials"],
                     show_progress_bar=True,
                 )
 
@@ -261,7 +261,9 @@ class ModelTrainer:
             train_ensemble_predictions = np.zeros_like(self.data.y_train)
             total_weight = sum(1 / mae for mae in best_maes)
             weights = [1 / mae / total_weight for mae in best_maes]
-            mlflow.log_params({"weights": weights})
+            mlflow.log_params(
+                {"weights": dict(zip(self.train_config["models"], weights))}
+            )
 
             for model, weight in zip(best_models, weights):
                 train_predictions = model.predict(self.data.x_train)
@@ -329,18 +331,18 @@ class ModelTrainer:
             }
             mlflow.log_params(params_with_prefix)
 
-            best_model = self._train_model(model_name, params)
+            best_model = self.train_model(model_name, params)
 
             if model_name == "xgb":
                 mlflow.xgboost.log_model(
                     xgb_model=best_model,
-                    artifact_path=f"models/{model_name}",
+                    artifact_path=f"{model_name}",
                     registered_model_name=model_name,
                 )
             elif model_name == "rf":
                 mlflow.sklearn.log_model(
                     sk_model=best_model,
-                    artifact_path=f"models/{model_name}",
+                    artifact_path=f"{model_name}",
                     registered_model_name=model_name,
                 )
             else:

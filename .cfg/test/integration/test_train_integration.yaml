@@ -1,0 +1,7 @@
+training_data_folder_path: test/synthetic_data/unformatted
+features:
+  - all
+nan_thresh: 0.15
+drift_thresh: 0.03
+cat_cols:
+  - test_cat_col
