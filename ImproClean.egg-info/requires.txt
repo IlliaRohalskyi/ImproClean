@@ -12,6 +12,7 @@ pandas==2.1.4
 prefect
 pre-commit
 scikit-learn
+sqlalchemy
 openpyxl
 optuna
 psycopg2-binary

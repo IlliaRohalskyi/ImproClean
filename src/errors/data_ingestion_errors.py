@@ -41,6 +41,26 @@ class ReadingError(Exception):
         super().__init__("Reading error. Failed to read the data from the database.")
 
 
+class WritingError(Exception):
+    """
+    Error that is raised when an error occurs while writing data
+    from the PostgreSQL database.
+    """
+
+    def __init__(self):
+        super().__init__("Writing error. Failed to write the data to the database.")
+
+
+class DeletionError(Exception):
+    """
+    Error that is raised when an error occurs while deleting data
+    from the PostgreSQL database.
+    """
+
+    def __init__(self):
+        super().__init__("Deletion error. Failed to delete the data from the database.")
+
+
 class MultipleFilesError(Exception):
     """
     Error that is raised when the folder has multiple files, that could be read.

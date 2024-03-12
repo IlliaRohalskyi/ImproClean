@@ -14,6 +14,17 @@ from src.components.data_ingestion import DataIngestion
 from src.utility import get_cfg
 
 
+@pytest.fixture(name="sample_data")
+def fixture_sample_data():
+    """
+    Creates a sample DataFrame for testing purposes.
+
+    Returns:
+        pd.DataFrame: A DataFrame with sample data.
+    """
+    return pd.DataFrame({"preds": [1.2, 3.4], "tr_data": [1, 2]})
+
+
 @pytest.fixture(name="data_ingestion_object")
 def fixture_data_ingestion_object():
     """
@@ -69,3 +80,15 @@ def test_sql_ingestion(data_ingestion_object):
     upload_data(data_path, "synthetic_unformatted")
     data = data_ingestion_object.get_sql_table("synthetic_unformatted")
     assert isinstance(data, pd.DataFrame), "SQL data should be a DataFrame"
+
+
+def test_write_delete(data_ingestion_object, sample_data):
+    """
+    Tests the write_data and delete_data methods of the DataIngestion class.
+
+    Args:
+        data_ingestion_object (DataIngestion): An instance of the DataIngestion class.
+        sample_data (pd.DataFrame): A DataFrame for testing data writing and deletion.
+    """
+    data_ingestion_object.write_data(sample_data, "test_write_delete")
+    data_ingestion_object.delete_data("test_write_delete")
