@@ -136,7 +136,6 @@ def write_predictions(cfg, predictions, ingested_data, ref_data):
     index_col = cfg["index_col"]
     mapping = ref_data.columns.str.startswith(("Red KBE", "Energie"))
     pred_col_names = ref_data.columns[mapping]
-    print(predictions, pred_col_names)
     preds_df = pd.DataFrame(predictions, columns=pred_col_names)
     dataframe = pd.concat(
         [
