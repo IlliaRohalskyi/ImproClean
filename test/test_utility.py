@@ -16,7 +16,7 @@ from src.utility import get_cfg, get_root
 
 def create_synthetic_data() -> pd.DataFrame:
     """
-    Creates synthetic data based on the configuration file.
+    Creates synthetic data while maintaining original data types.
 
     Returns:
         pd.DataFrame: A synthetic DataFrame with random data.
@@ -28,9 +28,15 @@ def create_synthetic_data() -> pd.DataFrame:
         get_root(), "test/synthetic_data/unformatted/synthetic_unformatted.xlsx"
     )
     df = pd.read_excel(path)
-    synthetic_df = pd.DataFrame(np.random.normal(size=(row_count, len(df.columns))))
 
-    synthetic_df.columns = df.columns
+    synthetic_df = pd.DataFrame()
+    for column in df.columns:
+        if df[column].dtype == "float64":
+            synthetic_df[column] = np.random.normal(size=row_count)
+        elif df[column].dtype == "int64":
+            synthetic_df[column] = np.random.randint(0, 100, size=row_count)
+        else:
+            synthetic_df[column] = np.random.choice(df[column], size=row_count)
 
     return synthetic_df
 

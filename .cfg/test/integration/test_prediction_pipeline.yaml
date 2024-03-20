@@ -1,0 +1,4 @@
+model_names: default
+prediction_table: predict_data_test
+write_table: predictions_test
+index_col: Waschen

@@ -48,7 +48,7 @@ class DataTransformation:
         """
         self.transformation_config = get_cfg("components/data_transformation.yaml")
 
-    def select_data(self, df) -> pd.DataFrame:
+    def select_data(self, df, select_target=True) -> pd.DataFrame:
         """
         Selects columns from the DataFrame that start with the
         specified in the config file strings.
@@ -64,7 +64,7 @@ class DataTransformation:
         column_startswith = self.transformation_config["features"]
 
         if "all" in column_startswith:
-            start_names = (
+            start_names = [
                 "Ziel",
                 "Innoculum",
                 "Waschen",
@@ -72,11 +72,16 @@ class DataTransformation:
                 "Prozess",
                 "DoE",
                 "timestamp",
-            )
-            column_mapping = ~df.columns.str.startswith(start_names)
+            ]
+
+            if not select_target:
+                start_names.extend(["Red KBE", "Energie"])
+
+            column_mapping = ~df.columns.str.startswith(tuple(start_names))
 
         else:
-            column_startswith.extend(["Red KBE", "Energie"])
+            if select_target:
+                column_startswith.extend(["Red KBE", "Energie"])
             start_names = tuple(column_startswith)
             column_mapping = df.columns.str.startswith(start_names)
 
@@ -166,10 +171,3 @@ class DataTransformation:
             y_test=np.array(y_test),
             feature_names=x_train.columns,
         )
-
-
-if __name__ == "__main__":
-    from src.components.data_ingestion import DataIngestion
-
-    data = DataIngestion().initiate_data_ingestion()
-    print(DataTransformation().select_data(data))

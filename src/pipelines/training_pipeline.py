@@ -3,8 +3,6 @@ Module for defining a Prefect flow to orchestrate a machine learning training pi
 
 This module includes tasks for data ingestion, transformation, validation,
 train-test split, and model training.
-
-It uses components from the src.components package to streamline the workflow.
 """
 from prefect import flow
 

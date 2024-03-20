@@ -109,9 +109,7 @@ class DataValidation:
         if nan_message == "nan_nonimputable":
             logging.error("NanError encountered")
             raise NanError
-
         validation_issues.append(nan_message)
-
         if not all(pred_df.columns == train_df.columns):
             logging.error("ColumnsDiffError encountered")
             raise ColumnsDiffError

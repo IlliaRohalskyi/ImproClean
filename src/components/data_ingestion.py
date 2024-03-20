@@ -199,10 +199,3 @@ class DataIngestion:
         finally:
             cursor.close()
             connection.close()
-
-
-if __name__ == "__main__":
-    import sys
-
-    for path in sys.path:
-        print(path)
