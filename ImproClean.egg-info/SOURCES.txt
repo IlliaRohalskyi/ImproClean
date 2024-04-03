@@ -21,6 +21,7 @@ src/errors/data_ingestion_errors.py
 src/errors/data_validation_errors.py
 src/errors/model_training_errors.py
 src/pipelines/__init__.py
+src/pipelines/monitoring_pipeline.py
 src/pipelines/prediction_pipeline.py
 src/pipelines/retraining_pipeline.py
 src/pipelines/training_pipeline.py
