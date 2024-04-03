@@ -2,3 +2,4 @@ nan_thresh: 0.15
 drift_thresh: 0.03
 cat_cols:
   -
+drift_reports_folder: reports

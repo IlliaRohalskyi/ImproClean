@@ -1,4 +1,3 @@
 model_names: default
 prediction_table: predict_data
 write_table: predictions
-index_col: Waschen

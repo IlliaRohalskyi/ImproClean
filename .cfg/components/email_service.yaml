@@ -1,0 +1,3 @@
+subject: Drift report
+reports_path: reports
+email_message: Drift detected, please review reports attached to the email

@@ -71,18 +71,18 @@ def get_pred_data(cfg):
 
 
 @task
-def select_data(ingested_pred):
+def select_data(data):
     """
-    Task to select relevant data columns for prediction.
+    Task to select relevant data columns for dataframe.
 
     Args:
-    - ingested_pred (pandas.DataFrame): Ingested prediction data.
+    - data (pandas.DataFrame): data from which columns are to be selected.
 
     Returns:
-    - selected_pred (pandas.DataFrame): Selected prediction data.
+    - selected_data (pandas.DataFrame): Selected data.
     """
 
-    return DataTransformation().select_data(ingested_pred, select_target=False)
+    return DataTransformation().select_data(data, select_target=False)
 
 
 @task
@@ -97,8 +97,11 @@ def validate_data(selected_pred, ref_data):
     Returns:
     - validated_data (pandas.DataFrame): Validated prediction data.
     """
+    train_checks = DataValidation().check_training_data(ref_data)
+    if train_checks:
+        ref_data = DataTransformation().clean_data(ref_data, train_checks)
     validation_checks = DataValidation().check_prediction_data(selected_pred, ref_data)
-    if validation_checks:
+    if "nan_imputable" in validation_checks or "duplicates" in validation_checks:
         return DataTransformation().clean_data(selected_pred, validation_checks)
     return selected_pred
 
@@ -133,16 +136,11 @@ def write_predictions(cfg, predictions, ingested_data, ref_data):
     - None
     """
     table_name = cfg["write_table"]
-    index_col = cfg["index_col"]
     mapping = ref_data.columns.str.startswith(("Red KBE", "Energie"))
     pred_col_names = ref_data.columns[mapping]
     preds_df = pd.DataFrame(predictions, columns=pred_col_names)
     dataframe = pd.concat(
-        [
-            ingested_data[[index_col]],
-            preds_df,
-            ingested_data.drop([index_col], axis=1),
-        ],
+        [ingested_data, preds_df],
         axis=1,
     )
 
@@ -170,7 +168,7 @@ def prediction_pipeline(config):
     Prefect flow for orchestrating a machine learning prediction pipeline.
 
     Args:
-    - cfg (dict): Configuration containing pipeline settings.
+    - config (dict): Configuration containing pipeline settings.
 
     Returns:
     - None

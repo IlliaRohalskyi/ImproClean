@@ -13,6 +13,7 @@ src/components/data_ingestion.py
 src/components/data_loader.py
 src/components/data_transformation.py
 src/components/data_validation.py
+src/components/email_service.py
 src/components/model_loader.py
 src/components/model_trainer.py
 src/errors/__init__.py
@@ -20,6 +21,7 @@ src/errors/data_ingestion_errors.py
 src/errors/data_validation_errors.py
 src/errors/model_training_errors.py
 src/pipelines/__init__.py
+src/pipelines/prediction_pipeline.py
 src/pipelines/retraining_pipeline.py
 src/pipelines/training_pipeline.py
 src/pipelines/common/__init__.py
