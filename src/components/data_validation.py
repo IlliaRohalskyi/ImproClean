@@ -123,7 +123,7 @@ class DataValidation:
         validation_issues.append(nan_message)
         if not all(pred_df.columns == train_df.columns):
             logging.error("ColumnsDiffError encountered")
-            raise ColumnsDiffError(pred_df, train_df)
+            raise ColumnsDiffError
         if not all(pred_df.dtypes == train_df.dtypes):
             logging.error("DtypeDiffError encountered")
             raise DtypeDiffError
